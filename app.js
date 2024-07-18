@@ -6,6 +6,7 @@ const {
   getApi,
   getArticleById,
   getArticles,
+  getArticleIdComments,
 } = require("./controller/controller");
 
 // This is where Express has access to the requests and responses objects and functions as middleware
@@ -16,6 +17,8 @@ app.get("/api", getApi);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleIdComments);
 
 // At the bottom of the app file...
 app.use((err, req, res, next) => {

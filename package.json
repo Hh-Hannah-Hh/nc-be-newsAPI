@@ -32,9 +32,12 @@
     "express-json": "^1.0.0",
     "jest-sorted": "^1.0.15",
     "nodemon": "^3.1.4",
+    "npm": "^10.8.2",
     "pg": "^8.12.0",
+    "run": "^1.5.0",
     "sorted": "^0.1.1",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "test": "^3.3.0"
   },
   "jest": {
     "setupFilesAfterEnv": [
