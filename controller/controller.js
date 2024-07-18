@@ -1,4 +1,4 @@
-const { fetchTopics } = require("../model/model");
+const { fetchTopics, fetchArticleIdComments } = require("../model/model");
 const endpoints = require("../endpoints.json");
 // functions are required in from the model
 
@@ -39,4 +39,21 @@ const getArticles = (req, res, next) => {
     });
 };
 
-module.exports = { getTopics, getApi, getArticleById, getArticles };
+const getArticleIdComments = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticleIdComments(article_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = {
+  getTopics,
+  getApi,
+  getArticleById,
+  getArticles,
+  getArticleIdComments,
+};
