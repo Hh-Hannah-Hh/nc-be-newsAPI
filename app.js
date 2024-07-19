@@ -7,7 +7,6 @@ const {
   getArticleById,
   getArticles,
   getArticleIdComments,
-  postArticleIdComments,
   postCommentToArticleId,
 } = require("./controller/controller");
 
