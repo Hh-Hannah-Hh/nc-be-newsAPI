@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves a single article when given the article id",
-    "queries": ["article_id"],
+    "queries": ["article_id, created_at, order"],
     "exampleResponse": {
       "article": {
         "author": "butter_bridge",
@@ -40,6 +40,39 @@
         "votes": 100,
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves all comments for an article when given it's id",
+    "queries": ["article_id"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "git push origin master",
+          "votes": 0,
+          "author": "icellusedkars",
+          "article_id": 3,
+          "created_at": 1592641440000
+        },
+        {
+          "body": "Ambidextrous marsupial",
+          "votes": 0,
+          "author": "icellusedkars",
+          "article_id": 3,
+          "created_at": 1600560600000
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts comments for an article when given it's id a body and username",
+    "queries": ["article_id", "body", "username"],
+    "exampleResponse": {
+      "body": "Writing a comment to post.",
+      "votes": 0,
+      "author": "icellusedkars",
+      "article_id": 1,
+      "created_at": 1604437200000
     }
   }
 }

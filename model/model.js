@@ -56,9 +56,33 @@ fetchArticleIdComments = (article_id) => {
     });
 };
 
+addCommentToArticleId = (article_id, username, body) => {
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "No comments posted. Article does not exist",
+        });
+      }
+      return db
+        .query(
+          `INSERT INTO comments (body, author, article_id)
+          VALUES($1, $2, $3)
+          RETURNING *;`,
+          [body, username, article_id]
+        )
+        .then((comment) => {
+          return comment.rows[0];
+        });
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
   fetchArticleIdComments,
+  addCommentToArticleId,
 };
