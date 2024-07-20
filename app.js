@@ -7,8 +7,8 @@ const {
   getArticleById,
   getArticles,
   getArticleIdComments,
-  postArticleIdComments,
   postCommentToArticleId,
+  patchUpdateVotesByArticleId,
 } = require("./controller/controller");
 
 app.use(express.json());
@@ -25,6 +25,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
 
 app.post("/api/articles/:article_id/comments", postCommentToArticleId);
+
+app.patch("/api/articles/:article_id", patchUpdateVotesByArticleId);
 
 // At the bottom of the app file...
 app.use((err, req, res, next) => {

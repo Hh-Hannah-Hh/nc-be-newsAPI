@@ -41,7 +41,7 @@ fetchArticleIdComments = (article_id) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "No comments to return. Article does not exist",
+          msg: "Article does not exist",
         });
       }
       return db.query(
@@ -63,7 +63,7 @@ addCommentToArticleId = (article_id, username, body) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "No comments posted. Article does not exist",
+          msg: "Article does not exist",
         });
       }
       return db
@@ -79,10 +79,34 @@ addCommentToArticleId = (article_id, username, body) => {
     });
 };
 
+updateArticleVotes = (article_id, inc_votes) => {
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "Article does not exist",
+        });
+      }
+      return db
+        .query(
+          `UPDATE articles
+      SET votes = votes + $1
+      RETURNING *;`,
+          [inc_votes]
+        )
+        .then((article) => {
+          return article.rows[0];
+        });
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
   fetchArticleIdComments,
   addCommentToArticleId,
+  updateArticleVotes,
 };
