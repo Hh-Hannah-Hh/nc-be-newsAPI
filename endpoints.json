@@ -74,5 +74,16 @@
       "article_id": 1,
       "created_at": 1604437200000
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the number of votes on a specific article when given the article id and an object with new votes",
+    "queries": ["article_id", "votes"],
+    "example response": {
+      "body": "I find this existence challenging",
+      "votes": 105,
+      "author": "butter_bridge",
+      "article_id": 1,
+      "created_at": "1594329060000"
+    }
   }
 }

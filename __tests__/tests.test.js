@@ -133,9 +133,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get(`/api/articles/36/comments`)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(
-          `No comments to return. Article does not exist`
-        );
+        expect(response.body.msg).toBe(`Article does not exist`);
       });
   });
   test("GET 400: sends an appropriate status and error message when given an invalid id", () => {
@@ -171,9 +169,7 @@ describe("/api/articles/:article_id/comments", () => {
       .post(`/api/articles/36/comments`)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(
-          `No comments posted. Article does not exist`
-        );
+        expect(response.body.msg).toBe(`Article does not exist`);
       });
   });
   test("POST 400: sends an appropriate status and error message when given an invalid id", () => {
@@ -204,6 +200,45 @@ describe("/api/articles/:article_id/comments", () => {
       .send({
         username: "icellusedkars",
         body: null,
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe(`Bad request`);
+      });
+  });
+});
+
+describe("/api/articles/:article_id/", () => {
+  test("PATCH 200: responds with the updated article with increased votes property when given an article id and a comment object with a positive votes property value", () => {
+    return request(app)
+      .patch(`/api/articles/1`)
+      .send({
+        inc_votes: 5,
+      })
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toMatchObject({
+          body: "I find this existence challenging",
+          votes: 105,
+          author: "butter_bridge",
+          article_id: 1,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 400: sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+      .patch(`/api/articles/not-an-id`)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe(`Bad request`);
+      });
+  });
+  test("PATCH 400: sends an appropriate status and error message when given an invalid new vote value", () => {
+    return request(app)
+      .patch(`/api/articles/1`)
+      .send({
+        inc_votes: "not a number",
       })
       .expect(400)
       .then((response) => {

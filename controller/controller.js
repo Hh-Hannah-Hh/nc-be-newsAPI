@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticleIdComments,
   addCommentToArticleId,
+  updateArticleVotes,
 } = require("../model/model");
 const endpoints = require("../endpoints.json");
 // functions are required in from the model
@@ -66,6 +67,18 @@ const postCommentToArticleId = (req, res, next) => {
     });
 };
 
+const patchUpdateVotesByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  updateArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getApi,
@@ -73,4 +86,5 @@ module.exports = {
   getArticles,
   getArticleIdComments,
   postCommentToArticleId,
+  patchUpdateVotesByArticleId,
 };
