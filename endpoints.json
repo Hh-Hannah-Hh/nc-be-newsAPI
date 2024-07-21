@@ -85,5 +85,10 @@
       "article_id": 1,
       "created_at": "1594329060000"
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment when given the specific comment id",
+    "queries": ["comment_id"],
+    "example response": { "status": 204 }
   }
 }

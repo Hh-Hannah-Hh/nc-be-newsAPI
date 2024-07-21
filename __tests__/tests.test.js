@@ -47,7 +47,7 @@ describe("/api/articles/:article_id", () => {
       .get(`/api/articles/36`)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(`Article does not exist`);
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
   test("GET 400: sends an appropriate status and error message when given an invalid id", () => {
@@ -133,7 +133,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get(`/api/articles/36/comments`)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(`Article does not exist`);
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
   test("GET 400: sends an appropriate status and error message when given an invalid id", () => {
@@ -169,7 +169,7 @@ describe("/api/articles/:article_id/comments", () => {
       .post(`/api/articles/36/comments`)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(`Article does not exist`);
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
   test("POST 400: sends an appropriate status and error message when given an invalid id", () => {
@@ -189,9 +189,7 @@ describe("/api/articles/:article_id/comments", () => {
       })
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe(
-          `No comments posted. Username not found.`
-        );
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
   test("POST 400: responds with the appropriate status error message when the body value is NULL", () => {
@@ -229,9 +227,23 @@ describe("/api/articles/:article_id/", () => {
   test("PATCH 400: sends an appropriate status and error message when given an invalid id", () => {
     return request(app)
       .patch(`/api/articles/not-an-id`)
+      .send({
+        inc_votes: 5,
+      })
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe(`Bad request`);
+      });
+  });
+  test("PATCH 404: responds with the appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .patch(`/api/articles/36`)
+      .send({
+        inc_votes: 5,
+      })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
   test("PATCH 400: sends an appropriate status and error message when given an invalid new vote value", () => {
@@ -243,6 +255,33 @@ describe("/api/articles/:article_id/", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe(`Bad request`);
+      });
+  });
+});
+
+describe("/api/comments/:comment_id/", () => {
+  test("DELETE 204: deletes the given comment by comment_id and responds with a message", () => {
+    return request(app)
+      .delete(`/api/comments/1`)
+      .expect(204)
+      .then((response) => {
+        expect(response.body.msg).toBe();
+      });
+  });
+  test("DELETE 400: sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+      .delete(`/api/comments/not-an-id`)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe(`Bad request`);
+      });
+  });
+  test("DELETE 404: responds with the appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .delete(`/api/comments/9999`)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(`Not found`);
       });
   });
 });

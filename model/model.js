@@ -13,7 +13,7 @@ fetchArticleById = (article_id) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "Article does not exist",
+          msg: "Not found",
         });
       }
       return result.rows[0];
@@ -41,7 +41,7 @@ fetchArticleIdComments = (article_id) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "Article does not exist",
+          msg: "Not found",
         });
       }
       return db.query(
@@ -63,7 +63,7 @@ addCommentToArticleId = (article_id, username, body) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "Article does not exist",
+          msg: "Not found",
         });
       }
       return db
@@ -86,7 +86,7 @@ updateArticleVotes = (article_id, inc_votes) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: "Article does not exist",
+          msg: "Not found",
         });
       }
       return db
@@ -102,6 +102,28 @@ updateArticleVotes = (article_id, inc_votes) => {
     });
 };
 
+deleteComment = (comment_id) => {
+  return db
+    .query(`SELECT * FROM comments WHERE comment_id = $1`, [comment_id])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "Not found",
+        });
+      }
+      return db
+        .query(
+          `DELETE FROM comments
+  WHERE comment_id = $1`,
+          [comment_id]
+        )
+        .then((comment) => {
+          return comment.rows[0];
+        });
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -109,4 +131,5 @@ module.exports = {
   fetchArticleIdComments,
   addCommentToArticleId,
   updateArticleVotes,
+  deleteComment,
 };
