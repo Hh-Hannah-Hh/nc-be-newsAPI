@@ -124,6 +124,14 @@ deleteComment = (comment_id) => {
     });
 };
 
+fetchUsers = () => {
+  return db
+    .query(`SELECT users.username, users.name, users.avatar_url FROM users;`)
+    .then((body) => {
+      return body.rows;
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -132,4 +140,5 @@ module.exports = {
   addCommentToArticleId,
   updateArticleVotes,
   deleteComment,
+  fetchUsers,
 };

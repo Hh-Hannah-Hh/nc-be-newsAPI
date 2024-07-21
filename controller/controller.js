@@ -4,6 +4,7 @@ const {
   addCommentToArticleId,
   updateArticleVotes,
   deleteComment,
+  fetchUsers,
 } = require("../model/model");
 const endpoints = require("../endpoints.json");
 // functions are required in from the model
@@ -91,6 +92,16 @@ const deleteCommentByCommentId = (req, res, next) => {
     });
 };
 
+const getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getApi,
@@ -100,4 +111,5 @@ module.exports = {
   postCommentToArticleId,
   patchUpdateVotesByArticleId,
   deleteCommentByCommentId,
+  getUsers,
 };
