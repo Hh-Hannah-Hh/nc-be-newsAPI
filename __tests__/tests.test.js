@@ -28,8 +28,8 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles/1`)
       .expect(200)
-      .then((response) => {
-        expect(response.body.article).toEqual({
+      .then(({ body }) => {
+        expect(body.article).toEqual({
           author: "butter_bridge",
           title: "Living in the shadow of a great man",
           article_id: 1,
@@ -46,16 +46,16 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles/36`)
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe(`Not found`);
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Not found`);
       });
   });
   test("GET 400: sends an appropriate status and error message when given an invalid id", () => {
     return request(app)
       .get(`/api/articles/not-an-id`)
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe(`Bad request`);
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad request`);
       });
   });
 });
@@ -65,8 +65,8 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles`)
       .expect(200)
-      .then((response) => {
-        const articles = response.body.articles;
+      .then(({ body }) => {
+        const articles = body.articles;
         expect(articles.length).toBe(13);
         articles.forEach((article) => {
           expect(article).toMatchObject({
@@ -85,8 +85,8 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles`)
       .expect(200)
-      .then((response) => {
-        const articles = response.body.articles;
+      .then(({ body }) => {
+        const articles = body.articles;
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -96,8 +96,8 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get(`/api/articles/1/comments`)
       .expect(200)
-      .then((response) => {
-        const comments = response.body.comments;
+      .then(({ body }) => {
+        const comments = body.comments;
         expect(comments.length).toBe(11);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
@@ -115,8 +115,8 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get(`/api/articles/1/comments`)
       .expect(200)
-      .then((response) => {
-        const comments = response.body.comments;
+      .then(({ body }) => {
+        const comments = body.comments;
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -132,16 +132,84 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get(`/api/articles/36/comments`)
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe(`Not found`);
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Not found`);
       });
   });
   test("GET 400: sends an appropriate status and error message when given an invalid id", () => {
     return request(app)
       .get(`/api/articles/not-an-id/comments`)
       .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe(`Bad request`);
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad request`);
+      });
+  });
+});
+
+describe("article queries", () => {
+  test("GET 200: Returns an array of all articles sorted by created at by default in decending order when no column or order is specified", () => {
+    return request(app)
+      .get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 200: Returns an array of all articles sorted by the given column in descending order by default when a column is specified but no order is specified", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=title`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 200: Returns an array of all articles sorted by created at in ascending order when no column is given but ascending order is specified", () => {
+    return request(app)
+      .get(`/api/articles?order_by=asc`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted("created_at", {
+          ascending: true,
+        });
+        console.log(body.articles);
+      });
+  });
+  test("GET 400: sends an appropriate status and error message when given an invalid column to sort by and a valid order", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=not_a_column&order=asc`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad request`);
+      });
+  });
+  test("GET 400: sends an appropriate status and error message when given an valid column to sort by and a invalid order", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=author&order=wrong`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad request`);
+      });
+  });
+  test("GET 200: Returns an array of all articles sorted by votes, in descending order by default when sorted by votes", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: true,
+        });
+      });
+  });
+  test("GET 200: Returns an array of all articles sorted by votes in ascending order of votes when specified", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes&order_by=asc`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSorted("votes", {
+          ascending: true,
+        });
       });
   });
 });
