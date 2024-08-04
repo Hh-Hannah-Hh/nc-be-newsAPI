@@ -20,7 +20,7 @@ fetchArticleById = (article_id) => {
     });
 };
 
-fetchArticles = (sort_by = "created_at", order = "DESC") => {
+fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const validSortBys = [
     "article_id",
     "title",
@@ -35,20 +35,40 @@ fetchArticles = (sort_by = "created_at", order = "DESC") => {
 
   let sqlStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
     COUNT(comments.comment_id) AS comment_count FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id`;
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
-  let queryValues = [];
+  const queryValues = [];
+
+  const validTopics = [];
 
   if (!validSortBys.includes(sort_by) || !validOrders.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  sqlStr += ` ORDER BY ${sort_by} ${order};`;
-
-  return db.query(sqlStr, queryValues).then((articles) => {
-    return articles.rows;
-  });
+  if (topic) {
+    return db
+      .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+      .then((result) => {
+        if (result.rows.length === 1) {
+          sqlStr += ` WHERE topic = $1`;
+          queryValues.push(topic);
+        } else {
+          return Promise.reject({
+            status: 404,
+            msg: "Not found",
+          });
+        }
+        sqlStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+        return db.query(sqlStr, queryValues).then((articles) => {
+          return articles.rows;
+        });
+      });
+  } else {
+    sqlStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+    return db.query(sqlStr).then((articles) => {
+      return articles.rows;
+    });
+  }
 };
 
 fetchArticleIdComments = (article_id) => {

@@ -11,110 +11,122 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
+    "queries": {
+      "sort_by": [
+        "article_id",
+        "title",
+        "topic",
+        "author",
+        "body",
+        "created_at",
+        "votes"
+      ],
+      "order": ["ASC", "DESC"],
+      "exampleResponse": {
+        "articles": [
+          {
+            "title": "Seafood substitutions are increasing",
+            "topic": "cooking",
+            "author": "weegembump",
+            "body": "Text from the article..",
+            "created_at": "2018-05-30T15:59:13.341Z",
+            "votes": 0,
+            "comment_count": 6
+          }
+        ]
+      },
+      "topic": "Takes a topic string to filter by"
+    },
+    "GET /api/articles/:article_id": {
+      "description": "serves a single article when given the article id",
+      "queries": ["article_id, created_at, order"],
+      "exampleResponse": {
+        "article": {
+          "author": "butter_bridge",
+          "title": "Living in the shadow of a great man",
+          "article_id": 1,
+          "body": "I find this existence challenging",
+          "topic": "mitch",
+          "created_at": 1594329060000,
+          "votes": 100,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
-    }
-  },
-  "GET /api/articles/:article_id": {
-    "description": "serves a single article when given the article id",
-    "queries": ["article_id, created_at, order"],
-    "exampleResponse": {
-      "article": {
-        "author": "butter_bridge",
-        "title": "Living in the shadow of a great man",
-        "article_id": 1,
-        "body": "I find this existence challenging",
-        "topic": "mitch",
-        "created_at": 1594329060000,
-        "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
-    }
-  },
-  "GET /api/articles/:article_id/comments": {
-    "description": "serves all comments for an article when given it's id",
-    "queries": ["article_id"],
-    "exampleResponse": {
-      "comments": [
+    },
+    "GET /api/articles/:article_id/comments": {
+      "description": "serves all comments for an article when given it's id",
+      "queries": ["article_id"],
+      "exampleResponse": {
+        "comments": [
+          {
+            "body": "git push origin master",
+            "votes": 0,
+            "author": "icellusedkars",
+            "article_id": 3,
+            "created_at": 1592641440000
+          },
+          {
+            "body": "Ambidextrous marsupial",
+            "votes": 0,
+            "author": "icellusedkars",
+            "article_id": 3,
+            "created_at": 1600560600000
+          }
+        ]
+      }
+    },
+    "POST /api/articles/:article_id/comments": {
+      "description": "posts comments for an article when given it's id a body and username",
+      "queries": ["article_id", "body", "username"],
+      "exampleResponse": {
+        "body": "Writing a comment to post.",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": 1604437200000
+      }
+    },
+    "PATCH /api/articles/:article_id": {
+      "description": "updates the number of votes on a specific article when given the article id and an object with new votes",
+      "queries": ["article_id", "votes"],
+      "example response": {
+        "body": "I find this existence challenging",
+        "votes": 105,
+        "author": "butter_bridge",
+        "article_id": 1,
+        "created_at": "1594329060000"
+      }
+    },
+    "DELETE /api/comments/:comment_id": {
+      "description": "deletes a comment when given the specific comment id",
+      "queries": ["comment_id"],
+      "example response": { "status": 204 }
+    },
+    "GET /api/users": {
+      "description": "serves an array of all users",
+      "queries": ["username", "name", "avatar_url"],
+      "example response": [
         {
-          "body": "git push origin master",
-          "votes": 0,
-          "author": "icellusedkars",
-          "article_id": 3,
-          "created_at": 1592641440000
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         },
         {
-          "body": "Ambidextrous marsupial",
-          "votes": 0,
-          "author": "icellusedkars",
-          "article_id": 3,
-          "created_at": 1600560600000
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        },
+        {
+          "username": "rogersop",
+          "name": "paul",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        },
+        {
+          "username": "lurker",
+          "name": "do_nothing",
+          "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
         }
       ]
     }
-  },
-  "POST /api/articles/:article_id/comments": {
-    "description": "posts comments for an article when given it's id a body and username",
-    "queries": ["article_id", "body", "username"],
-    "exampleResponse": {
-      "body": "Writing a comment to post.",
-      "votes": 0,
-      "author": "icellusedkars",
-      "article_id": 1,
-      "created_at": 1604437200000
-    }
-  },
-  "PATCH /api/articles/:article_id": {
-    "description": "updates the number of votes on a specific article when given the article id and an object with new votes",
-    "queries": ["article_id", "votes"],
-    "example response": {
-      "body": "I find this existence challenging",
-      "votes": 105,
-      "author": "butter_bridge",
-      "article_id": 1,
-      "created_at": "1594329060000"
-    }
-  },
-  "DELETE /api/comments/:comment_id": {
-    "description": "deletes a comment when given the specific comment id",
-    "queries": ["comment_id"],
-    "example response": { "status": 204 }
-  },
-  "GET /api/users": {
-    "description": "serves an array of all users",
-    "queries": ["username", "name", "avatar_url"],
-    "example response": [
-      {
-        "username": "butter_bridge",
-        "name": "jonny",
-        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-      },
-      {
-        "username": "icellusedkars",
-        "name": "sam",
-        "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
-      },
-      {
-        "username": "rogersop",
-        "name": "paul",
-        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
-      },
-      {
-        "username": "lurker",
-        "name": "do_nothing",
-        "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
-      }
-    ]
   }
 }
