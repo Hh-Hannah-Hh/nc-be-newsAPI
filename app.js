@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const {
   getTopics,
@@ -13,6 +14,7 @@ const {
   getUsers,
 } = require("./controller/controller");
 
+app.use(cors());
 app.use(express.json());
 
 // This is where Express has access to the requests and responses objects and functions as middleware
